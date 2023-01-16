@@ -23,3 +23,24 @@ polyCoefficient := []*big.Int{
 
 poly := polynomial.NewPolynomial(polyCoefficient)
 ```
+
+## Addition
+
+```go
+polyCoefficientOne := []*big.Int{ // 10x + 5
+  big.NewInt(5),
+  big.NewInt(10),
+}
+
+polyCoefficientTwo := []*big.Int{ // 3x^2 + 2x + 1
+  big.NewInt(1),
+  big.NewInt(2),
+  big.NewInt(3),
+}
+
+polyOne := polynomial.NewPolynomial(polyCoefficientOne)
+polyTwo := polynomial.NewPolynomial(polyCoefficientTwo)
+
+result := new(polynomial.Polynomial)
+result = result.Add(polyOne, polyTwo) // 3x^2 + 12x + 6
+```
