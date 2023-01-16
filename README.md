@@ -14,14 +14,14 @@ The library supports the following operations on polynomials:
 ## Creating a polynomial
 Creating a polynomial x^3 + 5x - 4  
 ```go
-polyCoefficient := []*big.Int{
+polyCoefficient := []*big.Int{ // x^3 + 5x - 4
   big.NewInt(-4),
   big.NewInt(5),
   big.NewInt(0),
   big.NewInt(1),
 }
 
-poly := polynomial.NewPolynomial(polyCoefficient)
+poly := polynomial.NewPolynomial(polyCoefficient) 
 ```
 
 ## Example of addition
