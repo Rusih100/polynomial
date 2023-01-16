@@ -24,7 +24,7 @@ polyCoefficient := []*big.Int{
 poly := polynomial.NewPolynomial(polyCoefficient)
 ```
 
-## Addition
+## Example of addition
 
 ```go
 polyCoefficientOne := []*big.Int{ // 10x + 5
