@@ -13,7 +13,7 @@ The library supports the following operations on polynomials:
 
 ## Creating a polynomial
 Creating a polynomial x^3 + 5x - 4  
-```
+```go
 polyCoefficient := []*big.Int{
   big.NewInt(-4),
   big.NewInt(5),
