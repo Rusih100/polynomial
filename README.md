@@ -1,5 +1,5 @@
 # polynomial
-A small library for working with polynomials
+A small library for working with polynomials. Supports big numbers
 
 ## Description
 The library supports the following operations on polynomials:
