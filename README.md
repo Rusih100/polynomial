@@ -1,6 +1,8 @@
 # polynomial
 A small library for working with polynomials. Supports big numbers
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/Rusih100/polynomial.svg)](https://pkg.go.dev/github.com/Rusih100/polynomial)
+
 ## Install
 ```
 go get github.com/Rusih100/polynomial
