@@ -5,6 +5,8 @@ import (
 	"strconv"
 )
 
+// Polynomial - structure for a polynomial.
+// The zero position of the coefficients array corresponds to the coefficient of the free term of the polynomial.
 type Polynomial struct {
 	coefficients []*big.Int
 }
