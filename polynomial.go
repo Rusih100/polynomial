@@ -5,13 +5,12 @@ import (
 	"strconv"
 )
 
-// Реализация многочлена и операций над ним
-
 type Polynomial struct {
 	coefficients []*big.Int
 }
 
-// Set - Задает массив коэфицентов, начиная со свободного члена многочлена.
+// Set - sets an array of coefficients in c, and returns c.
+// The zero position of the coefficients array corresponds to the coefficient of the free term of the polynomial.
 func (c *Polynomial) Set(coefficients []*big.Int) *Polynomial {
 
 	c.coefficients = []*big.Int{}
@@ -31,7 +30,7 @@ func (c *Polynomial) Set(coefficients []*big.Int) *Polynomial {
 		c.coefficients[i].Set(coefficients[i])
 	}
 
-	// Убираем лишние нули
+	// Removing extra zeros
 	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
 		c.coefficients = c.coefficients[:len(c.coefficients)-1]
 	}
@@ -39,13 +38,13 @@ func (c *Polynomial) Set(coefficients []*big.Int) *Polynomial {
 	return c
 }
 
-// Get - Получения коэфицента i-той степени
+// Get - returns the coefficient of the polynomial.
 func (c *Polynomial) Get(i int) *big.Int {
 	result := big.NewInt(0)
 	return result.Set(c.coefficients[i])
 }
 
-// SetPolynomial - Задает массив коэфицентов, относительно другого полинома
+// SetPolynomial - sets an array of coefficients of the polynomial c based on the polynomial p. Returns c.
 func (c *Polynomial) SetPolynomial(p *Polynomial) *Polynomial {
 
 	c.coefficients = []*big.Int{}
@@ -65,7 +64,7 @@ func (c *Polynomial) SetPolynomial(p *Polynomial) *Polynomial {
 		c.coefficients[i].Set(p.coefficients[i])
 	}
 
-	// Убираем лишние нули
+	// Removing extra zeros
 	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
 		c.coefficients = c.coefficients[:len(c.coefficients)-1]
 	}
@@ -73,7 +72,7 @@ func (c *Polynomial) SetPolynomial(p *Polynomial) *Polynomial {
 	return c
 }
 
-// Add - Складывает два многочлена a и b, и записывает в c
+// Add - adds two polynomials a and b and writes to c. Returns c.
 func (c *Polynomial) Add(_a, _b *Polynomial) *Polynomial {
 
 	a := new(Polynomial)
@@ -106,7 +105,7 @@ func (c *Polynomial) Add(_a, _b *Polynomial) *Polynomial {
 		c.coefficients[i].Add(c.coefficients[i], b.coefficients[i])
 	}
 
-	// Убираем лишние нули
+	// Removing extra zeros
 	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
 		c.coefficients = c.coefficients[:len(c.coefficients)-1]
 	}
@@ -114,7 +113,7 @@ func (c *Polynomial) Add(_a, _b *Polynomial) *Polynomial {
 	return c
 }
 
-// Sub - вычитает из многочлена a многочлен b, и записывает в c
+// Sub - subtracts the polynomial b from the polynomial a and writes it to c. Returns c.
 func (c *Polynomial) Sub(_a, _b *Polynomial) *Polynomial {
 
 	a := new(Polynomial)
@@ -147,7 +146,7 @@ func (c *Polynomial) Sub(_a, _b *Polynomial) *Polynomial {
 		c.coefficients[i].Sub(c.coefficients[i], b.coefficients[i])
 	}
 
-	// Убираем лишние нули
+	// Removing extra zeros
 	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
 		c.coefficients = c.coefficients[:len(c.coefficients)-1]
 	}
@@ -155,7 +154,7 @@ func (c *Polynomial) Sub(_a, _b *Polynomial) *Polynomial {
 	return c
 }
 
-// Mul - Умножает два многочлена a и b, и записывает в c
+// Mul - multiplies two polynomials a and b and writes to c. Returns c.
 func (c *Polynomial) Mul(_a, _b *Polynomial) *Polynomial {
 
 	a := new(Polynomial)
@@ -181,7 +180,7 @@ func (c *Polynomial) Mul(_a, _b *Polynomial) *Polynomial {
 		}
 	}
 
-	// Убираем лишние нули
+	// Removing extra zeros
 	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
 		c.coefficients = c.coefficients[:len(c.coefficients)-1]
 	}
@@ -189,7 +188,7 @@ func (c *Polynomial) Mul(_a, _b *Polynomial) *Polynomial {
 	return c
 }
 
-// Mod - Берет модуль для каждого коэфицента многочлена a
+// Mod - takes the modulus for each coefficient of the polynomial a and writes the coefficients in c. Returns c.
 func (c *Polynomial) Mod(_a *Polynomial, _mod *big.Int) *Polynomial {
 
 	a := new(Polynomial)
@@ -199,8 +198,6 @@ func (c *Polynomial) Mod(_a *Polynomial, _mod *big.Int) *Polynomial {
 	mod.Set(_mod)
 
 	a.SetPolynomial(_a)
-
-	// Взятие модуля
 
 	c.coefficients = []*big.Int{}
 
@@ -212,7 +209,7 @@ func (c *Polynomial) Mod(_a *Polynomial, _mod *big.Int) *Polynomial {
 		c.coefficients[i].Set(new(big.Int).Mod(a.coefficients[i], mod))
 	}
 
-	// Убираем лишние нули
+	// Removing extra zeros
 	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
 		c.coefficients = c.coefficients[:len(c.coefficients)-1]
 	}
@@ -221,7 +218,8 @@ func (c *Polynomial) Mod(_a *Polynomial, _mod *big.Int) *Polynomial {
 
 }
 
-// QuoRem - Деление с остатком многочлена a на многочлен b
+// QuoRem - division with remainder of polynomial a by polynomial b.
+// Sets the quotient of division to c. Returns the quotient and remainder.
 func (c *Polynomial) QuoRem(a, b *Polynomial) (quo, rem *Polynomial) {
 
 	A := new(Polynomial)
@@ -237,10 +235,8 @@ func (c *Polynomial) QuoRem(a, b *Polynomial) (quo, rem *Polynomial) {
 		panic("Division by zero")
 	}
 
-	// Очистка исходного масива
 	c.coefficients = []*big.Int{}
 
-	// Проверка длин
 	if aLen < bLen {
 		return c, A
 	}
@@ -248,7 +244,6 @@ func (c *Polynomial) QuoRem(a, b *Polynomial) (quo, rem *Polynomial) {
 	aLen = aLen - 1
 	bLen = bLen - 1
 
-	// Деление
 	QLen := aLen - bLen + 1
 
 	for i := 0; i < QLen; i++ {
@@ -267,12 +262,11 @@ func (c *Polynomial) QuoRem(a, b *Polynomial) (quo, rem *Polynomial) {
 		}
 	}
 
-	// Убираем лишние нули
+	// Removing extra zeros
 	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
 		c.coefficients = c.coefficients[:len(c.coefficients)-1]
 	}
 
-	// Убираем лишние нули
 	for A.coefficients[len(A.coefficients)-1].Sign() == 0 && len(A.coefficients) > 1 {
 		A.coefficients = A.coefficients[:len(A.coefficients)-1]
 	}
@@ -280,7 +274,7 @@ func (c *Polynomial) QuoRem(a, b *Polynomial) (quo, rem *Polynomial) {
 	return c, A
 }
 
-// Представление полинома в виде строки вида x^3 + 2x - 1
+// String - returns a polynomial in the form of a string of the form x^3 + 2x - 1.
 func (c *Polynomial) String() string {
 
 	lenCoefficients := len(c.coefficients)
@@ -288,37 +282,29 @@ func (c *Polynomial) String() string {
 
 	temp := big.NewInt(0)
 
-	// Случай длины 1
 	if lenCoefficients == 1 && c.coefficients[0].Sign() == 0 {
 		return "0 "
 	}
 
-	// Общий случай
 	for i := lenCoefficients - 1; i >= 0; i-- {
 
 		temp.Set(c.coefficients[i])
 
-		// Печатаем число если оно не ноль
 		if temp.Sign() != 0 {
 
-			// Смотрим на знак
-			// Добавляем плюс, если число положительное и не самая большая степень
 			if temp.Sign() > 0 && i != lenCoefficients-1 {
 				result = result + "+ "
 			}
-			// Добавляем минус, если число отрицательное
+
 			if temp.Sign() < 0 {
 				result = result + "-"
 				if i != lenCoefficients-1 {
 					result = result + " "
 				}
-
 			}
 
-			// Смотрим на на коэфицент по модулю
 			temp = temp.Abs(temp)
 
-			// Печатаем если коэфицент не равен 1
 			if temp.Cmp(big.NewInt(1)) == 0 && i == 0 {
 				result = result + temp.String()
 
@@ -326,26 +312,21 @@ func (c *Polynomial) String() string {
 				result = result + temp.String()
 			}
 
-			// Смотрим на степень и ставим x
 			if i != 0 {
 				result = result + "x"
 			}
 
-			// Печатем степень
 			if i != 0 && i != 1 {
 				result = result + "^" + strconv.Itoa(i) + " "
 			} else {
 				result = result + " "
 			}
-
 		}
-
 	}
-
 	return result
 }
 
-// StringCoefficients - Представление полиноса в виде строки вектора X(3 3 2)
+// StringCoefficients - returns a polynomial as a string of vector X(3 3 2).
 func (c *Polynomial) StringCoefficients() string {
 
 	lenCoefficients := len(c.coefficients)
@@ -362,10 +343,9 @@ func (c *Polynomial) StringCoefficients() string {
 	return result
 }
 
-// Value - Вычисляет значение многочлена при конкретном x
+// Value - returns the value of the polynomial for a specific x.
 func (c *Polynomial) Value(_x *big.Int) *big.Int {
 
-	// Копируем значения, чтобы не менять значения по указателю
 	x := new(big.Int)
 	x.Set(_x)
 
@@ -375,7 +355,7 @@ func (c *Polynomial) Value(_x *big.Int) *big.Int {
 	cLen := len(c.coefficients)
 
 	for i := 0; i < cLen; i++ {
-		temp = Pow(x, big.NewInt(int64(i)))
+		temp = pow(x, big.NewInt(int64(i)))
 		temp = temp.Mul(temp, c.coefficients[i])
 		result = result.Add(result, temp)
 	}
@@ -383,15 +363,14 @@ func (c *Polynomial) Value(_x *big.Int) *big.Int {
 	return result
 }
 
-// NewPolynomial - Создает полином и задает ему массив значений при создании
+// NewPolynomial - creates a polynomial and sets it an array of values when creating.
 func NewPolynomial(coefficients []*big.Int) *Polynomial {
 	return new(Polynomial).Set(coefficients)
 }
 
-// Pow - Алгоритм быстрого возведения в степень.
-func Pow(_a *big.Int, _n *big.Int) (result *big.Int) {
+// pow - the algorithm of rapid exponentiation.
+func pow(_a *big.Int, _n *big.Int) (result *big.Int) {
 
-	// Копируем значения, чтобы не менять значения по указателю
 	a := new(big.Int)
 	n := new(big.Int)
 
