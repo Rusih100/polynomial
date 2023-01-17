@@ -49,3 +49,6 @@ polyTwo := polynomial.NewPolynomial(polyCoefficientTwo)
 result := new(polynomial.Polynomial)
 result = result.Add(polyOne, polyTwo) // 3x^2 + 12x + 6
 ```
+
+## Documentation
+https://pkg.go.dev/github.com/Rusih100/polynomial
