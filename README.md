@@ -1,6 +1,11 @@
 # polynomial
 A small library for working with polynomials. Supports big numbers
 
+## Install
+```
+go get github.com/Rusih100/polynomial
+```
+
 ## Description
 The library supports the following operations on polynomials:
 * Addition
