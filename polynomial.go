@@ -13,69 +13,63 @@ type Polynomial struct {
 
 // Set - sets an array of coefficients in c, and returns c.
 // The zero position of the coefficients array corresponds to the coefficient of the free term of the polynomial.
-func (c *Polynomial) Set(coefficients []*big.Int) *Polynomial {
+func (p *Polynomial) Set(coefficients []*big.Int) *Polynomial {
 
-	c.coefficients = []*big.Int{}
+	p.coefficients = []*big.Int{}
 
 	lenCoefficients := len(coefficients)
 
 	if lenCoefficients == 0 {
-		c.coefficients = append(c.coefficients, big.NewInt(0))
-		return c
+		p.coefficients = append(p.coefficients, big.NewInt(0))
+		return p
 	}
 
 	for i := 0; i < lenCoefficients; i++ {
-		c.coefficients = append(c.coefficients, big.NewInt(0))
+		p.coefficients = append(p.coefficients, big.NewInt(0))
 	}
 
 	for i := 0; i < lenCoefficients; i++ {
-		c.coefficients[i].Set(coefficients[i])
+		p.coefficients[i].Set(coefficients[i])
 	}
 
-	// Removing extra zeros
-	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
-		c.coefficients = c.coefficients[:len(c.coefficients)-1]
-	}
+	p.removeZeros()
 
-	return c
-}
-
-// Get - returns the coefficient of the polynomial.
-func (c *Polynomial) Get(i int) *big.Int {
-	result := big.NewInt(0)
-	return result.Set(c.coefficients[i])
+	return p
 }
 
 // SetPolynomial - sets an array of coefficients of the polynomial c based on the polynomial p. Returns c.
-func (c *Polynomial) SetPolynomial(p *Polynomial) *Polynomial {
+func (p *Polynomial) SetPolynomial(other *Polynomial) *Polynomial {
 
-	c.coefficients = []*big.Int{}
+	p.coefficients = []*big.Int{}
 
-	lenCoefficients := len(p.coefficients)
+	lenCoefficients := len(other.coefficients)
 
 	if lenCoefficients == 0 {
-		c.coefficients = append(c.coefficients, big.NewInt(0))
-		return c
+		p.coefficients = append(p.coefficients, big.NewInt(0))
+		return p
 	}
 
 	for i := 0; i < lenCoefficients; i++ {
-		c.coefficients = append(c.coefficients, big.NewInt(0))
+		p.coefficients = append(p.coefficients, big.NewInt(0))
 	}
 
 	for i := 0; i < lenCoefficients; i++ {
-		c.coefficients[i].Set(p.coefficients[i])
+		p.coefficients[i].Set(other.coefficients[i])
 	}
 
-	// Removing extra zeros
-	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
-		c.coefficients = c.coefficients[:len(c.coefficients)-1]
-	}
+	p.removeZeros()
 
-	return c
+	return p
+}
+
+// Get - returns the coefficient of the polynomial.
+func (p *Polynomial) Get(i int) *big.Int {
+	result := big.NewInt(0)
+	return result.Set(p.coefficients[i])
 }
 
 // Add - adds two polynomials a and b and writes to c. Returns c.
-func (c *Polynomial) Add(_a, _b *Polynomial) *Polynomial {
+func (p *Polynomial) Add(_a, _b *Polynomial) *Polynomial {
 
 	a := new(Polynomial)
 	b := new(Polynomial)
@@ -86,7 +80,7 @@ func (c *Polynomial) Add(_a, _b *Polynomial) *Polynomial {
 	a.SetPolynomial(_a)
 	b.SetPolynomial(_b)
 
-	c.coefficients = []*big.Int{}
+	p.coefficients = []*big.Int{}
 	maxLen := 0
 
 	if aLen > bLen {
@@ -96,27 +90,24 @@ func (c *Polynomial) Add(_a, _b *Polynomial) *Polynomial {
 	}
 
 	for i := 0; i < maxLen; i++ {
-		c.coefficients = append(c.coefficients, big.NewInt(0))
+		p.coefficients = append(p.coefficients, big.NewInt(0))
 	}
 
 	for i := 0; i < aLen; i++ {
-		c.coefficients[i].Add(c.coefficients[i], a.coefficients[i])
+		p.coefficients[i].Add(p.coefficients[i], a.coefficients[i])
 	}
 
 	for i := 0; i < bLen; i++ {
-		c.coefficients[i].Add(c.coefficients[i], b.coefficients[i])
+		p.coefficients[i].Add(p.coefficients[i], b.coefficients[i])
 	}
 
-	// Removing extra zeros
-	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
-		c.coefficients = c.coefficients[:len(c.coefficients)-1]
-	}
+	p.removeZeros()
 
-	return c
+	return p
 }
 
 // Sub - subtracts the polynomial b from the polynomial a and writes it to c. Returns c.
-func (c *Polynomial) Sub(_a, _b *Polynomial) *Polynomial {
+func (p *Polynomial) Sub(_a, _b *Polynomial) *Polynomial {
 
 	a := new(Polynomial)
 	b := new(Polynomial)
@@ -127,7 +118,7 @@ func (c *Polynomial) Sub(_a, _b *Polynomial) *Polynomial {
 	a.SetPolynomial(_a)
 	b.SetPolynomial(_b)
 
-	c.coefficients = []*big.Int{}
+	p.coefficients = []*big.Int{}
 	maxLen := 0
 
 	if aLen > bLen {
@@ -137,27 +128,24 @@ func (c *Polynomial) Sub(_a, _b *Polynomial) *Polynomial {
 	}
 
 	for i := 0; i < maxLen; i++ {
-		c.coefficients = append(c.coefficients, big.NewInt(0))
+		p.coefficients = append(p.coefficients, big.NewInt(0))
 	}
 
 	for i := 0; i < aLen; i++ {
-		c.coefficients[i].Add(c.coefficients[i], a.coefficients[i])
+		p.coefficients[i].Add(p.coefficients[i], a.coefficients[i])
 	}
 
 	for i := 0; i < bLen; i++ {
-		c.coefficients[i].Sub(c.coefficients[i], b.coefficients[i])
+		p.coefficients[i].Sub(p.coefficients[i], b.coefficients[i])
 	}
 
-	// Removing extra zeros
-	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
-		c.coefficients = c.coefficients[:len(c.coefficients)-1]
-	}
+	p.removeZeros()
 
-	return c
+	return p
 }
 
 // Mul - multiplies two polynomials a and b and writes to c. Returns c.
-func (c *Polynomial) Mul(_a, _b *Polynomial) *Polynomial {
+func (p *Polynomial) Mul(_a, _b *Polynomial) *Polynomial {
 
 	a := new(Polynomial)
 	b := new(Polynomial)
@@ -168,30 +156,27 @@ func (c *Polynomial) Mul(_a, _b *Polynomial) *Polynomial {
 	a.SetPolynomial(_a)
 	b.SetPolynomial(_b)
 
-	c.coefficients = []*big.Int{}
+	p.coefficients = []*big.Int{}
 
 	maxLen := aLen + bLen - 1
 
 	for i := 0; i < maxLen; i++ {
-		c.coefficients = append(c.coefficients, big.NewInt(0))
+		p.coefficients = append(p.coefficients, big.NewInt(0))
 	}
 
 	for i := 0; i < aLen; i++ {
 		for j := 0; j < bLen; j++ {
-			c.coefficients[i+j].Add(c.coefficients[i+j], new(big.Int).Mul(a.coefficients[i], b.coefficients[j]))
+			p.coefficients[i+j].Add(p.coefficients[i+j], new(big.Int).Mul(a.coefficients[i], b.coefficients[j]))
 		}
 	}
 
-	// Removing extra zeros
-	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
-		c.coefficients = c.coefficients[:len(c.coefficients)-1]
-	}
+	p.removeZeros()
 
-	return c
+	return p
 }
 
 // Mod - takes the modulus for each coefficient of the polynomial a and writes the coefficients in c. Returns c.
-func (c *Polynomial) Mod(_a *Polynomial, _mod *big.Int) *Polynomial {
+func (p *Polynomial) Mod(_a *Polynomial, _mod *big.Int) *Polynomial {
 
 	a := new(Polynomial)
 	aLen := len(_a.coefficients)
@@ -201,28 +186,25 @@ func (c *Polynomial) Mod(_a *Polynomial, _mod *big.Int) *Polynomial {
 
 	a.SetPolynomial(_a)
 
-	c.coefficients = []*big.Int{}
+	p.coefficients = []*big.Int{}
 
 	for i := 0; i < aLen; i++ {
-		c.coefficients = append(c.coefficients, big.NewInt(0))
+		p.coefficients = append(p.coefficients, big.NewInt(0))
 	}
 
 	for i := 0; i < aLen; i++ {
-		c.coefficients[i].Set(new(big.Int).Mod(a.coefficients[i], mod))
+		p.coefficients[i].Set(new(big.Int).Mod(a.coefficients[i], mod))
 	}
 
-	// Removing extra zeros
-	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
-		c.coefficients = c.coefficients[:len(c.coefficients)-1]
-	}
+	p.removeZeros()
 
-	return c
+	return p
 
 }
 
 // QuoRem - division with remainder of polynomial a by polynomial b.
 // Sets the quotient of division to c. Returns the quotient and remainder.
-func (c *Polynomial) QuoRem(a, b *Polynomial) (quo, rem *Polynomial) {
+func (p *Polynomial) QuoRem(a, b *Polynomial) (quo, rem *Polynomial) {
 
 	A := new(Polynomial)
 	B := new(Polynomial)
@@ -237,10 +219,10 @@ func (c *Polynomial) QuoRem(a, b *Polynomial) (quo, rem *Polynomial) {
 		panic("Division by zero")
 	}
 
-	c.coefficients = []*big.Int{}
+	p.coefficients = []*big.Int{}
 
 	if aLen < bLen {
-		return c, A
+		return p, A
 	}
 
 	aLen = aLen - 1
@@ -249,48 +231,62 @@ func (c *Polynomial) QuoRem(a, b *Polynomial) (quo, rem *Polynomial) {
 	QLen := aLen - bLen + 1
 
 	for i := 0; i < QLen; i++ {
-		c.coefficients = append(c.coefficients, big.NewInt(0))
+		p.coefficients = append(p.coefficients, big.NewInt(0))
 	}
 
 	for i := aLen; i >= bLen; i-- {
-		c.coefficients[i-bLen].Set(
+		p.coefficients[i-bLen].Set(
 			new(big.Int).Div(A.coefficients[i], B.coefficients[bLen]),
 		)
 
 		for j := bLen; j >= 0; j-- {
 			A.coefficients[i-bLen+j].Set(
-				new(big.Int).Sub(A.coefficients[i-bLen+j], new(big.Int).Mul(B.coefficients[j], c.coefficients[i-bLen])),
+				new(big.Int).Sub(A.coefficients[i-bLen+j], new(big.Int).Mul(B.coefficients[j], p.coefficients[i-bLen])),
 			)
 		}
 	}
 
-	// Removing extra zeros
-	for c.coefficients[len(c.coefficients)-1].Sign() == 0 && len(c.coefficients) > 1 {
-		c.coefficients = c.coefficients[:len(c.coefficients)-1]
+	p.removeZeros()
+	A.removeZeros()
+
+	return p, A
+}
+
+// Value - returns the value of the polynomial for a specific x.
+func (p *Polynomial) Value(_x *big.Int) *big.Int {
+
+	x := new(big.Int)
+	x.Set(_x)
+
+	result := big.NewInt(0)
+	temp := new(big.Int)
+
+	cLen := len(p.coefficients)
+
+	for i := 0; i < cLen; i++ {
+		temp = pow(x, big.NewInt(int64(i)))
+		temp = temp.Mul(temp, p.coefficients[i])
+		result = result.Add(result, temp)
 	}
 
-	for A.coefficients[len(A.coefficients)-1].Sign() == 0 && len(A.coefficients) > 1 {
-		A.coefficients = A.coefficients[:len(A.coefficients)-1]
-	}
-
-	return c, A
+	return result
 }
 
 // String - returns a polynomial in the form of a string of the form x^3 + 2x - 1.
-func (c *Polynomial) String() string {
+func (p *Polynomial) String() string {
 
-	lenCoefficients := len(c.coefficients)
+	lenCoefficients := len(p.coefficients)
 	result := ""
 
 	temp := big.NewInt(0)
 
-	if lenCoefficients == 1 && c.coefficients[0].Sign() == 0 {
+	if lenCoefficients == 1 && p.coefficients[0].Sign() == 0 {
 		return "0 "
 	}
 
 	for i := lenCoefficients - 1; i >= 0; i-- {
 
-		temp.Set(c.coefficients[i])
+		temp.Set(p.coefficients[i])
 
 		if temp.Sign() != 0 {
 
@@ -329,13 +325,13 @@ func (c *Polynomial) String() string {
 }
 
 // StringCoefficients - returns a polynomial as a string of vector X(3 3 2).
-func (c *Polynomial) StringCoefficients() string {
+func (p *Polynomial) StringCoefficients() string {
 
-	lenCoefficients := len(c.coefficients)
+	lenCoefficients := len(p.coefficients)
 	result := "P:("
 
 	for i := lenCoefficients - 1; i >= 0; i-- {
-		result = result + c.coefficients[i].String()
+		result = result + p.coefficients[i].String()
 		if i != 0 {
 			result = result + " "
 		} else {
@@ -345,29 +341,19 @@ func (c *Polynomial) StringCoefficients() string {
 	return result
 }
 
-// Value - returns the value of the polynomial for a specific x.
-func (c *Polynomial) Value(_x *big.Int) *big.Int {
-
-	x := new(big.Int)
-	x.Set(_x)
-
-	result := big.NewInt(0)
-	temp := new(big.Int)
-
-	cLen := len(c.coefficients)
-
-	for i := 0; i < cLen; i++ {
-		temp = pow(x, big.NewInt(int64(i)))
-		temp = temp.Mul(temp, c.coefficients[i])
-		result = result.Add(result, temp)
-	}
-
-	return result
-}
-
 // NewPolynomial - creates a polynomial and sets it an array of values when creating.
 func NewPolynomial(coefficients []*big.Int) *Polynomial {
 	return new(Polynomial).Set(coefficients)
+}
+
+// removeZeros - removes insignificant zeros from the polynomial.
+func (p *Polynomial) removeZeros() {
+
+	if len(p.coefficients) > 0 {
+		for p.coefficients[len(p.coefficients)-1].Sign() == 0 && len(p.coefficients) > 1 {
+			p.coefficients = p.coefficients[:len(p.coefficients)-1]
+		}
+	}
 }
 
 // pow - the algorithm of rapid exponentiation.
